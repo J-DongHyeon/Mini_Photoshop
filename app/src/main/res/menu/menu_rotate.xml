@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/right"
+        android:title="시계 방향"></item>
+
+    <item
+        android:id="@+id/left"
+        android:title="반시계 방향"></item>
+
+</menu>

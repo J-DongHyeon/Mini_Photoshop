@@ -1,7 +1,9 @@
 package com.cookandroid.final_project_core;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,6 +14,9 @@ import android.graphics.Path;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -39,8 +44,10 @@ public class MainActivity extends AppCompatActivity {
     boolean control_getImg = false;
     String select_sBar;
     boolean control_sBar_visible;
+    boolean control_rotate_right = true;
 
     float scaleX = 1, scaleY = 1;
+    float angle = 0;
 
     float get_progress ;
 
@@ -72,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
 
         myview = new myView(this);
         view_layout.addView(myview);
+
+        registerForContextMenu(rotate);
 
 
 
@@ -149,12 +158,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        rotate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                control_sBar_visible = false;
+                sBar.setVisibility(View.INVISIBLE);
+
+                if (control_rotate_right) {
+                    angle += 20;
+                } else {
+                    angle -= 20;
+                }
+
+                myview.invalidate();
+
+            }
+        });
+
 
 
         sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                get_progress = sBar.getProgress();
 
+                switch (select_sBar) {
+                    case "zoom_in":
+                        scaleX = scaleY = get_progress / 50;
+                        myview.invalidate();
+                        break;
+                }
             }
 
             @Override
@@ -164,18 +197,39 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                get_progress = sBar.getProgress();
 
-                switch (select_sBar) {
-                    case "zoom_in":
-                        scaleX = scaleY = get_progress / 50;
-                        myview.invalidate();
-                        break;
-                }
 
             }
         });
         }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater menuInflater = getMenuInflater();
+        if (v == rotate) {
+            menu.setHeaderTitle("회전 방향");
+
+            menuInflater.inflate(R.menu.menu_rotate, menu);
+        }
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.right :
+                control_rotate_right = true;
+                break;
+            case R.id.left :
+                control_rotate_right = false;
+                break;
+        }
+
+        return false;
+    }
 
 
     @Override
@@ -213,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
             int cenY = view_layout.getHeight() / 2;
 
             canvas.scale(scaleX, scaleY, cenX, cenY);
+            canvas.rotate(angle, cenX, cenY);
 
 
             if (control_getImg) {

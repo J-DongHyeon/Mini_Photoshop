@@ -11,6 +11,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.renderscript.ScriptGroup;
 import android.view.View;
@@ -18,8 +19,13 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -76,6 +82,44 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                SimpleDateFormat day = new SimpleDateFormat("yyyyMMddHHmmss");
+                Date date = new Date();
+                String current_time = day.format(date) + "_capture";
+
+                view_layout.buildDrawingCache();
+                Bitmap bitmap = view_layout.getDrawingCache();
+                FileOutputStream fos = null;
+
+                File uploadFolder = Environment.getExternalStoragePublicDirectory("/DCIM/Camera/");
+
+                if (!uploadFolder.exists()) {
+                    uploadFolder.mkdir();
+                    Toast.makeText(getApplicationContext(), "폴더가 생성되었습니다.",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+                String str_path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DCIM/Camera/";
+
+
+                try {
+                    fos = new FileOutputStream(str_path+current_time+".jpg");
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+                    Toast.makeText(getApplicationContext(), "이미지 저장",
+                            Toast.LENGTH_SHORT).show();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                MediaScanner ms = MediaScanner.newInstance(getApplicationContext());
+
+                try {
+                    ms.mediaScanning(str_path + current_time + ".jpg");
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                view_layout.destroyDrawingCache();
             }
         });
 

@@ -2,7 +2,6 @@ package com.cookandroid.final_project_core;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,7 +12,6 @@ import android.graphics.Path;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.renderscript.ScriptGroup;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -35,9 +33,17 @@ public class MainActivity extends AppCompatActivity {
     Button getImg, saveImg;
     LinearLayout view_layout;
 
+    myView myview;
     Bitmap getImg_buffer;
 
     boolean control_getImg = false;
+    String select_sBar;
+    boolean control_sBar_visible;
+
+    float scaleX = 1, scaleY = 1;
+
+    float get_progress ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +69,11 @@ public class MainActivity extends AppCompatActivity {
         saveImg = (Button) findViewById(R.id.saveImg);
 
         view_layout = (LinearLayout) findViewById(R.id.view_layout);
-        view_layout.addView(new myView(this));
+
+        myview = new myView(this);
+        view_layout.addView(myview);
+
+
 
         getImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +133,50 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
+        zoom_in.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                control_sBar_visible = !control_sBar_visible;
+
+                if (control_sBar_visible) {
+                    sBar.setVisibility(View.VISIBLE);
+                } else {
+                    sBar.setVisibility(View.INVISIBLE);
+                }
+
+                select_sBar = "zoom_in";
+
+            }
+        });
+
+
+
+        sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                get_progress = sBar.getProgress();
+
+                switch (select_sBar) {
+                    case "zoom_in":
+                        scaleX = scaleY = get_progress / 50;
+                        myview.invalidate();
+                        break;
+                }
+
+            }
+        });
+        }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -143,6 +196,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+
     private class myView extends View {
         public myView(Context context) { super(context); }
 
@@ -153,16 +209,23 @@ public class MainActivity extends AppCompatActivity {
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
 
+            int cenX = view_layout.getWidth() / 2;
+            int cenY = view_layout.getHeight() / 2;
+
+            canvas.scale(scaleX, scaleY, cenX, cenY);
+
+
             if (control_getImg) {
                 int picX = (view_layout.getWidth() - getImg_buffer.getWidth()) / 2;
                 int picY = ((view_layout.getHeight() - getImg_buffer.getHeight()) / 2);
                 canvas.drawBitmap(getImg_buffer, picX, picY, paint);
+
             }
 
         }
 
-
-
     }
+
+
 
 }

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -47,10 +48,12 @@ public class MainActivity extends AppCompatActivity {
     String select_sBar;
     boolean control_rotate_right = true;
     boolean control_gray = false;
+    boolean control_blur = false;
 
     float scaleX = 1, scaleY = 1;
     float angle = 0;
     float RGB_bright = 1;
+    float blur_radius = 50.0f;
 
 
     @Override
@@ -150,6 +153,9 @@ public class MainActivity extends AppCompatActivity {
 
                 select_sBar = "zoom_in";
 
+                sBar.setProgress((int) (scaleX * 50));
+
+                myview.invalidate();
             }
         });
 
@@ -175,6 +181,10 @@ public class MainActivity extends AppCompatActivity {
                 sBar.setVisibility(View.VISIBLE);
 
                 select_sBar = "bright";
+
+                sBar.setProgress((int) (RGB_bright * 50));
+
+                myview.invalidate();
             }
         });
 
@@ -184,6 +194,25 @@ public class MainActivity extends AppCompatActivity {
                 sBar.setVisibility(View.INVISIBLE);
 
                 control_gray = !control_gray;
+                myview.invalidate();
+            }
+        });
+
+        blur.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                control_blur = !control_blur;
+
+                if (control_blur) {
+                    sBar.setVisibility(View.VISIBLE);
+                } else {
+                    sBar.setVisibility(View.INVISIBLE);
+                }
+
+                select_sBar = "blur";
+
+                sBar.setProgress((int) blur_radius);
+
                 myview.invalidate();
             }
         });
@@ -204,6 +233,10 @@ public class MainActivity extends AppCompatActivity {
                         RGB_bright = get_progress / 50;
                         myview.invalidate();
                         break;
+                    case "blur" :
+                        blur_radius = get_progress;
+                        myview.invalidate();
+
                 }
             }
 
@@ -295,6 +328,14 @@ public class MainActivity extends AppCompatActivity {
             if (control_gray) cm.setSaturation(0);
 
             paint.setColorFilter(new ColorMatrixColorFilter(cm));
+
+            BlurMaskFilter bMask;
+            bMask = new BlurMaskFilter(blur_radius+1, BlurMaskFilter.Blur.NORMAL);
+            if (control_blur) {
+                paint.setMaskFilter(bMask);
+            } else {
+                paint.setMaskFilter(null);
+            }
 
 
 

@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     boolean control_contrast = false;
     boolean control_pen = false;
     boolean control_stamp = false;
+    boolean control_eraser = false;
 
     float scaleX = 1, scaleY = 1;
     float angle = 0;
@@ -259,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
         pen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                control_stamp = false;
                 control_pen = !control_pen;
 
             }
@@ -267,8 +269,18 @@ public class MainActivity extends AppCompatActivity {
         stamp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                control_pen = false;
                 control_stamp = !control_stamp;
 
+            }
+        });
+
+        eraser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                control_eraser = true;
+
+                myview.invalidate();
             }
         });
 
@@ -540,8 +552,13 @@ public class MainActivity extends AppCompatActivity {
 
             draw_stamp(canvas);
 
+            if (control_eraser) {
+                eraser_method();
+            }
+
 
         }
+
 
         private void draw_stamp(Canvas canvas) {
             Bitmap stamp1_img = BitmapFactory.decodeResource(getResources(), R.drawable.stamp1);
@@ -564,6 +581,21 @@ public class MainActivity extends AppCompatActivity {
                 canvas.drawBitmap(stamp3_img, stamp3_sites[i][0], stamp3_sites[i][1], paint[0]);
             }
             stamp3_img.recycle();
+        }
+
+        private void eraser_method() {
+            path_idx = 1;
+            stamp1_idx = 0;
+            stamp2_idx = 0;
+            stamp3_idx = 0;
+
+            for (int i=0; i<path.length; i++) {
+                path[i] = new Path();
+            }
+
+            control_eraser = false;
+
+            invalidate();
         }
 
 

@@ -248,7 +248,6 @@ public class MainActivity extends AppCompatActivity {
                 control_bright = !control_bright;
                 control_contrast = false;
                 control_zoomin = false;
-                control_bright = false;
                 control_mosaic = false;
 
                 if (control_bright) {

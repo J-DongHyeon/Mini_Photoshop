@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Bundle;
@@ -43,13 +45,12 @@ public class MainActivity extends AppCompatActivity {
 
     boolean control_getImg = false;
     String select_sBar;
-    boolean control_sBar_visible;
     boolean control_rotate_right = true;
+    boolean control_gray = false;
 
     float scaleX = 1, scaleY = 1;
     float angle = 0;
-
-    float get_progress ;
+    float RGB_bright = 1;
 
 
     @Override
@@ -145,13 +146,7 @@ public class MainActivity extends AppCompatActivity {
         zoom_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                control_sBar_visible = !control_sBar_visible;
-
-                if (control_sBar_visible) {
-                    sBar.setVisibility(View.VISIBLE);
-                } else {
-                    sBar.setVisibility(View.INVISIBLE);
-                }
+                sBar.setVisibility(View.VISIBLE);
 
                 select_sBar = "zoom_in";
 
@@ -161,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
         rotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                control_sBar_visible = false;
                 sBar.setVisibility(View.INVISIBLE);
 
                 if (control_rotate_right) {
@@ -175,16 +169,39 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        bright.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sBar.setVisibility(View.VISIBLE);
+
+                select_sBar = "bright";
+            }
+        });
+
+        gray.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sBar.setVisibility(View.INVISIBLE);
+
+                control_gray = !control_gray;
+                myview.invalidate();
+            }
+        });
+
 
 
         sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                get_progress = sBar.getProgress();
+                float get_progress = sBar.getProgress();
 
                 switch (select_sBar) {
                     case "zoom_in":
                         scaleX = scaleY = get_progress / 50;
+                        myview.invalidate();
+                        break;
+                    case "bright" :
+                        RGB_bright = get_progress / 50;
                         myview.invalidate();
                         break;
                 }
@@ -256,7 +273,6 @@ public class MainActivity extends AppCompatActivity {
     private class myView extends View {
         public myView(Context context) { super(context); }
 
-        private Paint paint = new Paint();
         private Path path = new Path();
 
         @Override
@@ -269,12 +285,23 @@ public class MainActivity extends AppCompatActivity {
             canvas.scale(scaleX, scaleY, cenX, cenY);
             canvas.rotate(angle, cenX, cenY);
 
+            Paint paint = new Paint();
+            float[] array = {RGB_bright, 0, 0, 0, 0,
+                             0, RGB_bright, 0, 0, 0,
+                             0, 0, RGB_bright, 0, 0,
+                              0, 0, 0, 1, 0};
+
+            ColorMatrix cm = new ColorMatrix(array);
+            if (control_gray) cm.setSaturation(0);
+
+            paint.setColorFilter(new ColorMatrixColorFilter(cm));
+
+
 
             if (control_getImg) {
                 int picX = (view_layout.getWidth() - getImg_buffer.getWidth()) / 2;
                 int picY = ((view_layout.getHeight() - getImg_buffer.getHeight()) / 2);
                 canvas.drawBitmap(getImg_buffer, picX, picY, paint);
-
             }
 
         }

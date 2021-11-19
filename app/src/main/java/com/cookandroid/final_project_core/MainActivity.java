@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     int sel_blur_type = NORMAL;
     boolean control_contrast = false;
     boolean control_pen = false;
+    boolean control_stamp = false;
 
     float scaleX = 1, scaleY = 1;
     float angle = 0;
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     int bright_sign = 1;
     int pen_thickness = 3;
     int pen_color = Color.BLACK;
+    int select_stamp = R.drawable.stamp1;
 
 
     @Override
@@ -99,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         registerForContextMenu(rotate);
         registerForContextMenu(blur);
         registerForContextMenu(pen);
+        registerForContextMenu(stamp);
 
 
 
@@ -261,6 +264,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        stamp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                control_stamp = !control_stamp;
+
+            }
+        });
+
 
 
 
@@ -320,6 +331,10 @@ public class MainActivity extends AppCompatActivity {
             menu.setHeaderTitle("선 두께");
 
             menuInflater.inflate(R.menu.menu_pen, menu);
+        } else if (v == stamp) {
+            menu.setHeaderTitle("스탬프 선택");
+
+            menuInflater.inflate(R.menu.menu_stamp, menu);
         }
 
     }
@@ -390,6 +405,18 @@ public class MainActivity extends AppCompatActivity {
                 pen_color = Color.BLUE;
                 myview.invalidate();
                 break;
+            case R.id.stamp1 :
+                select_stamp = R.drawable.stamp1;
+                myview.invalidate();
+                break;
+            case R.id.stamp2 :
+                select_stamp = R.drawable.stamp2;
+                myview.invalidate();
+                break;
+            case R.id.stamp3 :
+                select_stamp = R.drawable.stamp3;
+                myview.invalidate();
+                break;
 
         }
 
@@ -423,6 +450,13 @@ public class MainActivity extends AppCompatActivity {
         Paint paint[] = new Paint[100];
         Path path[] = new Path[100];
         int path_idx = 1;
+
+        int stamp1_sites[][] = new int[50][2];
+        int stamp1_idx = 0;
+        int stamp2_sites[][] = new int[50][2];
+        int stamp2_idx = 0;
+        int stamp3_sites[][] = new int[50][2];
+        int stamp3_idx = 0;
 
         public myView(Context context) {
             super(context);
@@ -504,7 +538,32 @@ public class MainActivity extends AppCompatActivity {
                 canvas.drawPath(path[i], paint[i]);
             }
 
+            draw_stamp(canvas);
 
+
+        }
+
+        private void draw_stamp(Canvas canvas) {
+            Bitmap stamp1_img = BitmapFactory.decodeResource(getResources(), R.drawable.stamp1);
+
+            for (int i=0; i<stamp1_idx; i++) {
+                canvas.drawBitmap(stamp1_img, stamp1_sites[i][0], stamp1_sites[i][1], paint[0]);
+            }
+            stamp1_img.recycle();
+
+            Bitmap stamp2_img = BitmapFactory.decodeResource(getResources(), R.drawable.stamp2);
+
+            for (int i=0; i<stamp2_idx; i++) {
+                canvas.drawBitmap(stamp2_img, stamp2_sites[i][0], stamp2_sites[i][1], paint[0]);
+            }
+            stamp2_img.recycle();
+
+            Bitmap stamp3_img = BitmapFactory.decodeResource(getResources(), R.drawable.stamp3);
+
+            for (int i=0; i<stamp3_idx; i++) {
+                canvas.drawBitmap(stamp3_img, stamp3_sites[i][0], stamp3_sites[i][1], paint[0]);
+            }
+            stamp3_img.recycle();
         }
 
 
@@ -514,23 +573,53 @@ public class MainActivity extends AppCompatActivity {
             int x = (int) event.getX();
             int y = (int) event.getY();
 
-            if (control_pen) {
 
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
+
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    if (control_pen)
                         path[path_idx].moveTo(x, y);
-                        break;
-                    case MotionEvent.ACTION_MOVE:
+
+                    if (control_stamp) {
+
+                        switch (select_stamp) {
+                            case R.drawable.stamp1 :
+                                stamp1_sites[stamp1_idx][0] = x;
+                                stamp1_sites[stamp1_idx++][1] = y;
+                                if (stamp1_idx > 50) stamp1_idx = 50;
+                                break;
+                            case R.drawable.stamp2 :
+                                stamp2_sites[stamp2_idx][0] = x;
+                                stamp2_sites[stamp2_idx++][1] = y;
+                                if (stamp2_idx > 50) stamp2_idx = 50;
+                                break;
+                            case R.drawable.stamp3 :
+                                stamp3_sites[stamp3_idx][0] = x;
+                                stamp3_sites[stamp3_idx++][1] = y;
+                                if (stamp3_idx > 50) stamp3_idx = 50;
+                                break;
+                        }
+
+
+                    }
+
+                    break;
+
+                case MotionEvent.ACTION_MOVE:
+                    if (control_pen)
                         path[path_idx].lineTo(x, y);
-                        break;
-                    case MotionEvent.ACTION_UP:
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    if (control_pen) {
                         path[path_idx++].lineTo(x, y);
                         if (path_idx > 100) path_idx = 100;
-                        break;
-
-                }
+                    }
+                    break;
 
             }
+
+
 
             invalidate();
             return true;

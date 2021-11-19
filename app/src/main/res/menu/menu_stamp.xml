@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/stamp1"
+        android:title="왕관"></item>
+
+    <item
+        android:id="@+id/stamp2"
+        android:title="주먹"></item>
+
+    <item
+        android:id="@+id/stamp3"
+        android:title="웃음"></item>
+</menu>

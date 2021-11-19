@@ -16,6 +16,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.EmbossMaskFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     ImageButton zoom_in, rotate, bright, gray, blur, mosaic, contrast,
             pen, stamp, eraser, snow;
     SeekBar sBar;
-    Button getImg, saveImg;
+    Button getImg, saveImg, return_state;
     LinearLayout view_layout;
 
     myView myview;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     boolean control_stamp = false;
     boolean control_eraser = false;
     boolean control_snow = false;
-    
+    boolean control_mosaic = false;
 
     float scaleX = 1, scaleY = 1;
     float angle = 0;
@@ -82,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setTitle("미니 포토샵");
+
         zoom_in = (ImageButton) findViewById(R.id.zoom_in);
         rotate = (ImageButton) findViewById(R.id.rotate);
         bright = (ImageButton) findViewById(R.id.bright);
@@ -98,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
         getImg = (Button) findViewById(R.id.getImg);
         saveImg = (Button) findViewById(R.id.saveImg);
+        return_state = (Button) findViewById(R.id.return_state);
 
         view_layout = (LinearLayout) findViewById(R.id.view_layout);
 
@@ -109,7 +113,23 @@ public class MainActivity extends AppCompatActivity {
         registerForContextMenu(pen);
         registerForContextMenu(stamp);
 
+        return_state.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scaleX = 1; scaleY = 1;
+                angle = 0;
+                RGB_bright = 1;
+                blur_radius = 50.0f;
+                brightness = 0;
+                bright_sign = 1;
+                control_gray = false;
+                control_blur = false;
+                control_contrast = false;
 
+                sBar.setProgress(50);
+                myview.invalidate();
+            }
+        });
 
         getImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,6 +205,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 control_zoomin = !control_zoomin;
+                control_bright = false;
+                control_mosaic = false;
 
                 if (control_zoomin) {
                     sBar.setVisibility(View.VISIBLE);
@@ -205,6 +227,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sBar.setVisibility(View.INVISIBLE);
+                control_zoomin = false;
+                control_bright = false;
+                control_mosaic = false;
 
                 if (control_rotate_right) {
                     angle += 20;
@@ -222,6 +247,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 control_bright = !control_bright;
                 control_contrast = false;
+                control_zoomin = false;
+                control_bright = false;
+                control_mosaic = false;
 
                 if (control_bright) {
                     sBar.setVisibility(View.VISIBLE);
@@ -241,6 +269,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sBar.setVisibility(View.INVISIBLE);
+                control_zoomin = false;
+                control_bright = false;
+                control_mosaic = false;
 
                 control_gray = !control_gray;
                 myview.invalidate();
@@ -251,6 +282,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 control_blur = !control_blur;
+                control_zoomin = false;
+                control_bright = false;
+                control_mosaic = false;
 
                 if (control_blur) {
                     sBar.setVisibility(View.VISIBLE);
@@ -269,6 +303,10 @@ public class MainActivity extends AppCompatActivity {
         mosaic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                control_mosaic = !control_mosaic;
+                control_zoomin = false;
+                control_bright = false;
+
 
             }
         });
@@ -277,6 +315,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 control_contrast = !control_contrast;
+                control_zoomin = false;
+                control_bright = false;
+                control_mosaic = false;
 
 
                 if (control_contrast) {
@@ -296,8 +337,11 @@ public class MainActivity extends AppCompatActivity {
         pen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                control_stamp = false;
                 control_pen = !control_pen;
+                control_zoomin = false;
+                control_bright = false;
+                control_mosaic = false;
+                control_stamp = false;
 
                 if (control_pen) {
                     pen.setBackgroundColor(0XFFaaaaaa);
@@ -313,8 +357,11 @@ public class MainActivity extends AppCompatActivity {
         stamp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                control_pen = false;
                 control_stamp = !control_stamp;
+                control_zoomin = false;
+                control_bright = false;
+                control_mosaic = false;
+                control_pen = false;
 
                 if (control_stamp) {
                     stamp.setBackgroundColor(0XFFaaaaaa);
@@ -330,6 +377,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 control_eraser = true;
+                control_zoomin = false;
+                control_bright = false;
+                control_mosaic = false;
 
                 myview.invalidate();
             }
@@ -340,6 +390,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 sBar.setVisibility(View.INVISIBLE);
                 control_snow = !control_snow;
+                control_zoomin = false;
+                control_bright = false;
+                control_mosaic = false;
 
                 if (control_getImg) {
                     if (control_snow) {
@@ -576,6 +629,11 @@ public class MainActivity extends AppCompatActivity {
 
     private class myView extends View {
 
+        int img_startX;
+        int img_startY;
+        int img_endX;
+        int img_endY;
+
         Paint paint[] = new Paint[100];
         Path path[] = new Path[100];
         int path_idx = 1;
@@ -586,6 +644,10 @@ public class MainActivity extends AppCompatActivity {
         int stamp2_idx = 0;
         int stamp3_sites[][] = new int[50][2];
         int stamp3_idx = 0;
+
+        int mosaic_rect_startX, mosaic_rect_startY;
+        int mosaic_rect_endX, mosaic_rect_endY;
+        boolean draw_rect = true;
 
         public myView(Context context) {
             super(context);
@@ -655,13 +717,8 @@ public class MainActivity extends AppCompatActivity {
 
 
             if (control_getImg) {
-                int picX = (view_layout.getWidth() - getImg_buffer.getWidth()) / 2;
-                int picY = ((view_layout.getHeight() - getImg_buffer.getHeight()) / 2);
-
-                canvas.drawBitmap(getImg_buffer, picX, picY, paint[0]);
+                getImg_method(canvas);
             }
-
-
 
             for (int i=1; i<=path_idx; i++) {
                 canvas.drawPath(path[i], paint[i]);
@@ -673,9 +730,89 @@ public class MainActivity extends AppCompatActivity {
                 eraser_method();
             }
 
-
+            if (control_getImg && control_mosaic) {
+                mosaic_method(canvas);
+            }
 
         }
+
+        private void getImg_method(Canvas canvas) {
+            img_startX = (view_layout.getWidth() - getImg_buffer.getWidth()) / 2;
+            img_startY = (view_layout.getHeight() - getImg_buffer.getHeight()) / 2;
+            img_endX = img_startX + getImg_buffer.getWidth();
+            img_endY = img_startY + getImg_buffer.getHeight();
+
+            canvas.drawBitmap(getImg_buffer, img_startX, img_startY, paint[0]);
+        }
+
+        private void mosaic_method (Canvas canvas) {
+            Paint mosaic_paint = new Paint();
+            mosaic_paint.setColor(Color.GREEN);
+            mosaic_paint.setStyle(Paint.Style.STROKE);
+            mosaic_paint.setStrokeWidth(10);
+
+            Rect rect = new Rect(mosaic_rect_startX, mosaic_rect_startY, mosaic_rect_endX, mosaic_rect_endY);
+
+            if (draw_rect) {
+                canvas.drawRect(rect, mosaic_paint);
+            } else {
+                getImg_buffer = mosaicEffect(getImg_buffer);
+                canvas.drawBitmap(getImg_buffer, img_startX, img_startY, paint[0]);
+
+            }
+        }
+
+        private Bitmap mosaicEffect (Bitmap source) {
+
+            int width = source.getWidth();
+            int height = source.getHeight();
+
+            int mosaic_startX = mosaic_rect_startX - img_startX;
+            int mosaic_startY = mosaic_rect_startY - img_startY;
+            int mosaic_endX = mosaic_rect_endX - img_startX;
+            int mosaic_endY = mosaic_rect_endY - img_startY;
+
+            int mosaic_width = mosaic_endX-mosaic_startX;
+            int mosaic_height = mosaic_endY-mosaic_startY;
+
+            int[] pixels = new int[width*height];
+            source.getPixels(pixels, 0, width, 0, 0, width, height);
+
+            int[] pixels_sub = new int [(mosaic_width) * (mosaic_height)];
+
+            for (int i=0; i<mosaic_height; i++) {
+                for (int j=0; j<mosaic_width; j++) {
+                    pixels_sub[i*(mosaic_width) + j] = pixels[(i+mosaic_startY)*width + mosaic_startX + j];
+                }
+            }
+
+            Bitmap bmRect = Bitmap.createBitmap(mosaic_width, mosaic_height, Bitmap.Config.ARGB_8888);
+            bmRect.setPixels(pixels_sub, 0, mosaic_width, 0, 0, mosaic_width, mosaic_height);
+
+            Bitmap temp = Bitmap.createScaledBitmap(bmRect, 5, 5, false);
+            bmRect = Bitmap.createScaledBitmap(temp, bmRect.getWidth(), bmRect.getHeight(), false);
+
+            bmRect.getPixels(pixels_sub, 0, bmRect.getWidth(), 0, 0, bmRect.getWidth(), bmRect.getHeight());
+
+            for (int i=0; i<mosaic_height; i++) {
+                for (int j=0; j<mosaic_width; j++) {
+                    pixels[(i+mosaic_startY)*width + mosaic_startX + j] = pixels_sub[i*(mosaic_width) + j];
+                }
+
+            }
+
+            bmRect.recycle();
+            temp.recycle();
+
+
+            Bitmap bmOut = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            bmOut.setPixels(pixels, 0, width, 0, 0, width, height);
+
+
+            return bmOut;
+        }
+
+
 
 
         private void draw_stamp(Canvas canvas) {
@@ -753,11 +890,52 @@ public class MainActivity extends AppCompatActivity {
 
                     }
 
+                    if (control_mosaic) {
+                        if (x < img_startX) {
+                            mosaic_rect_startX = img_startX;
+                        } else if (x > img_endX) {
+                            mosaic_rect_startX = img_endX;
+                        } else {
+                            mosaic_rect_startX = x;
+                        }
+
+                        if (y < img_startY) {
+                            mosaic_rect_startY = img_startY;
+                        } else if (y > img_endY) {
+                            mosaic_rect_startY = img_endY;
+                        } else {
+                            mosaic_rect_startY = y;
+                        }
+
+                        mosaic_rect_endX = mosaic_rect_startX;
+                        mosaic_rect_endY = mosaic_rect_startY;
+
+                        draw_rect = true;
+                    }
+
                     break;
 
                 case MotionEvent.ACTION_MOVE:
                     if (control_pen)
                         path[path_idx].lineTo(x, y);
+
+                    if (control_mosaic) {
+                        if (x < img_startX) {
+                            mosaic_rect_endX = img_startX;
+                        } else if (x > img_endX) {
+                            mosaic_rect_endX = img_endX;
+                        } else {
+                            mosaic_rect_endX = x;
+                        }
+
+                        if (y < img_startY) {
+                            mosaic_rect_endY = img_startY;
+                        } else if (y > img_endY) {
+                            mosaic_rect_endY = img_endY;
+                        } else {
+                            mosaic_rect_endY = y;
+                        }
+                    }
                     break;
 
                 case MotionEvent.ACTION_UP:
@@ -765,6 +943,11 @@ public class MainActivity extends AppCompatActivity {
                         path[path_idx++].lineTo(x, y);
                         if (path_idx > 100) path_idx = 100;
                     }
+
+                    if (control_mosaic) {
+                        draw_rect = false;
+                    }
+
                     break;
 
             }

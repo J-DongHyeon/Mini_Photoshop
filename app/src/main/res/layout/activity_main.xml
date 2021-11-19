@@ -121,11 +121,19 @@
         android:layout_weight="1">
 
         <Button
+            android:id="@+id/return_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="되돌리기"
+            android:layout_margin="10dp"
+            android:textSize="20dp"></Button>
+
+        <Button
             android:id="@+id/getImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="가져오기"
-            android:layout_marginRight="40dp"
+            android:layout_margin="10dp"
             android:textSize="20dp"></Button>
 
         <Button
@@ -133,7 +141,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="저장하기"
-            android:layout_marginLeft="40dp"
+            android:layout_margin="10dp"
             android:textSize="20dp"></Button>
 
 

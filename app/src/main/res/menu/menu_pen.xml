@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/mm3"
+        android:title="3mm"></item>
+
+    <item
+        android:id="@+id/mm5"
+        android:title="5mm"></item>
+
+    <item
+        android:id="@+id/mm10"
+        android:title="10mm"></item>
+
+    <item
+        android:id="@+id/mm15"
+        android:title="15mm"></item>
+
+    <item
+        android:id="@+id/mm20"
+        android:title="20mm"></item>
+
+    <item android:title="색 변경 >> ">
+        <menu>
+            <item
+                android:id="@+id/black"
+                android:title="검정"></item>
+            <item
+                android:id="@+id/gray"
+                android:title="회색"></item>
+            <item
+                android:id="@+id/red"
+                android:title="빨강"></item>
+            <item
+                android:id="@+id/green"
+                android:title="초록"></item>
+            <item
+                android:id="@+id/blue"
+                android:title="파랑"></item>
+        </menu>
+    </item>
+
+</menu>

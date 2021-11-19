@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,11 +48,13 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout view_layout;
 
     myView myview;
-    Bitmap getImg_buffer;
+    Bitmap getImg_buffer, getImg_buffer_sub;
 
     boolean control_getImg = false;
     String select_sBar;
+    boolean control_zoomin = false;
     boolean control_rotate_right = true;
+    boolean control_bright = false;
     boolean control_gray = false;
     boolean control_blur = false;
     final int NORMAL = 1, INNER = 2, OUTER = 3, SOLID = 4;
@@ -60,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     boolean control_pen = false;
     boolean control_stamp = false;
     boolean control_eraser = false;
+    boolean control_snow = false;
+    
 
     float scaleX = 1, scaleY = 1;
     float angle = 0;
@@ -116,6 +121,18 @@ public class MainActivity extends AppCompatActivity {
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                 startActivityForResult(intent, 1);
 
+                scaleX = 1; scaleY = 1;
+                angle = 0;
+                RGB_bright = 1;
+                blur_radius = 50.0f;
+                brightness = 0;
+                bright_sign = 1;
+                control_gray = false;
+                control_blur = false;
+                control_contrast = false;
+
+                sBar.setProgress(50);
+
             }
         });
 
@@ -167,7 +184,14 @@ public class MainActivity extends AppCompatActivity {
         zoom_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sBar.setVisibility(View.VISIBLE);
+                control_zoomin = !control_zoomin;
+
+                if (control_zoomin) {
+                    sBar.setVisibility(View.VISIBLE);
+                } else {
+                    sBar.setVisibility(View.INVISIBLE);
+                }
+
 
                 select_sBar = "zoom_in";
 
@@ -196,8 +220,14 @@ public class MainActivity extends AppCompatActivity {
         bright.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sBar.setVisibility(View.VISIBLE);
+                control_bright = !control_bright;
                 control_contrast = false;
+
+                if (control_bright) {
+                    sBar.setVisibility(View.VISIBLE);
+                } else {
+                    sBar.setVisibility(View.INVISIBLE);
+                }
 
                 select_sBar = "bright";
 
@@ -247,7 +277,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 control_contrast = !control_contrast;
-                sBar.setVisibility(View.VISIBLE);
+
+
+                if (control_contrast) {
+                    sBar.setVisibility(View.VISIBLE);
+                } else {
+                    sBar.setVisibility(View.INVISIBLE);
+                }
 
                 select_sBar = "contrast";
 
@@ -263,6 +299,14 @@ public class MainActivity extends AppCompatActivity {
                 control_stamp = false;
                 control_pen = !control_pen;
 
+                if (control_pen) {
+                    pen.setBackgroundColor(0XFFaaaaaa);
+                    stamp.setBackgroundColor(0XFFDDDDDD);
+                } else {
+                    pen.setBackgroundColor(0XFFDDDDDD);
+                }
+
+
             }
         });
 
@@ -271,6 +315,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 control_pen = false;
                 control_stamp = !control_stamp;
+
+                if (control_stamp) {
+                    stamp.setBackgroundColor(0XFFaaaaaa);
+                    pen.setBackgroundColor(0XFFDDDDDD);
+                } else {
+                    stamp.setBackgroundColor(0XFFDDDDDD);
+                }
 
             }
         });
@@ -283,6 +334,26 @@ public class MainActivity extends AppCompatActivity {
                 myview.invalidate();
             }
         });
+
+        snow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sBar.setVisibility(View.INVISIBLE);
+                control_snow = !control_snow;
+
+                if (control_getImg) {
+                    if (control_snow) {
+                        getImg_buffer = snowEffect(getImg_buffer);
+                    } else {
+                        getImg_buffer = getImg_buffer_sub;
+                    }
+                }
+
+
+                myview.invalidate();
+            }
+        });
+
 
 
 
@@ -304,6 +375,7 @@ public class MainActivity extends AppCompatActivity {
                     case "blur" :
                         blur_radius = get_progress;
                         myview.invalidate();
+                        break;
                     case "contrast" :
                         RGB_bright = get_progress / 50;
                         myview.invalidate();
@@ -323,7 +395,52 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
         }
+
+    private Bitmap snowEffect(Bitmap source) {
+        int width = source.getWidth();
+        int height = source.getHeight();
+        int[] pixels = new int[width*height];
+        source.getPixels(pixels, 0, width, 0, 0, width, height);
+        Random random = new Random();
+
+        int R, G, B, index = 0, threshold;
+        for (int y=0; y<height; y++) {
+            for (int x=0; x<width; x++) {
+                index = y*width + x;
+
+                R = Color.red(pixels[index]);
+                G = Color.green(pixels[index]);
+                B = Color.blue(pixels[index]);
+
+                threshold = random.nextInt(2000);
+                if (threshold > 1998) {
+                    pixels[index] = Color.rgb(255, 255, 255);
+
+                    if (index + 9*width+9 < pixels.length) {
+                        for(int i=1; i<10; i++) {
+                            pixels[index+i] = Color.rgb(255, 255, 255);
+                        }
+
+                        for (int i=1; i<10; i++) {
+                            for (int j=0; j<10; j++) {
+                                pixels[index + i*width+j] = Color.rgb(255, 255, 255);
+                            }
+                        }
+
+                    }
+
+                }
+            }
+        }
+
+        Bitmap bmOut = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bmOut.setPixels(pixels, 0, width, 0, 0, width, height);
+
+
+        return bmOut;
+    }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -445,7 +562,7 @@ public class MainActivity extends AppCompatActivity {
                     InputStream in = getContentResolver().openInputStream(data.getData());
                     Bitmap img = BitmapFactory.decodeStream(in);
                     in.close();
-                    getImg_buffer = img;
+                    getImg_buffer = getImg_buffer_sub = img;
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -516,7 +633,6 @@ public class MainActivity extends AppCompatActivity {
             paint[0].setColorFilter(new ColorMatrixColorFilter(cm));
 
             BlurMaskFilter bMask;
-
             switch (sel_blur_type) {
                 case INNER :
                     bMask = new BlurMaskFilter(blur_radius+1, BlurMaskFilter.Blur.INNER);
@@ -541,6 +657,7 @@ public class MainActivity extends AppCompatActivity {
             if (control_getImg) {
                 int picX = (view_layout.getWidth() - getImg_buffer.getWidth()) / 2;
                 int picY = ((view_layout.getHeight() - getImg_buffer.getHeight()) / 2);
+
                 canvas.drawBitmap(getImg_buffer, picX, picY, paint[0]);
             }
 
@@ -555,6 +672,7 @@ public class MainActivity extends AppCompatActivity {
             if (control_eraser) {
                 eraser_method();
             }
+
 
 
         }
@@ -656,6 +774,8 @@ public class MainActivity extends AppCompatActivity {
             invalidate();
             return true;
         }
+
+
 
 
 

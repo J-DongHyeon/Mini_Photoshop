@@ -12,6 +12,7 @@ import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.EmbossMaskFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Bundle;
@@ -35,7 +36,7 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
-    ImageButton zoom_in, rotate, bright, gray, blur, emboss, mosaic, contrast,
+    ImageButton zoom_in, rotate, bright, gray, blur, mosaic, contrast,
             pen, stamp, eraser, snow;
     SeekBar sBar;
     Button getImg, saveImg;
@@ -49,11 +50,16 @@ public class MainActivity extends AppCompatActivity {
     boolean control_rotate_right = true;
     boolean control_gray = false;
     boolean control_blur = false;
+    final int NORMAL = 1, INNER = 2, OUTER = 3, SOLID = 4;
+    int sel_blur_type = NORMAL;
+    boolean control_contrast = false;
 
     float scaleX = 1, scaleY = 1;
     float angle = 0;
     float RGB_bright = 1;
     float blur_radius = 50.0f;
+    int brightness = 0;
+    int bright_sign = 1;
 
 
     @Override
@@ -66,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
         bright = (ImageButton) findViewById(R.id.bright);
         gray = (ImageButton) findViewById(R.id.gray);
         blur = (ImageButton) findViewById(R.id.blur);
-        emboss = (ImageButton) findViewById(R.id.emboss);
         mosaic = (ImageButton) findViewById(R.id.mosaic);
         contrast = (ImageButton) findViewById(R.id.contrast);
         pen = (ImageButton) findViewById(R.id.pen);
@@ -85,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         view_layout.addView(myview);
 
         registerForContextMenu(rotate);
+        registerForContextMenu(blur);
 
 
 
@@ -179,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sBar.setVisibility(View.VISIBLE);
+                control_contrast = false;
 
                 select_sBar = "bright";
 
@@ -217,6 +224,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mosaic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        contrast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                control_contrast = !control_contrast;
+                sBar.setVisibility(View.VISIBLE);
+
+                select_sBar = "contrast";
+
+                sBar.setProgress((int) (RGB_bright * 50));
+
+                myview.invalidate();
+            }
+        });
+
+
 
 
         sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -236,6 +265,10 @@ public class MainActivity extends AppCompatActivity {
                     case "blur" :
                         blur_radius = get_progress;
                         myview.invalidate();
+                    case "contrast" :
+                        RGB_bright = get_progress / 50;
+                        myview.invalidate();
+                        break;
 
                 }
             }
@@ -262,6 +295,10 @@ public class MainActivity extends AppCompatActivity {
             menu.setHeaderTitle("회전 방향");
 
             menuInflater.inflate(R.menu.menu_rotate, menu);
+        } else if (v == blur) {
+            menu.setHeaderTitle("블러링 종류");
+
+            menuInflater.inflate(R.menu.menu_blur, menu);
         }
 
     }
@@ -275,6 +312,22 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.left :
                 control_rotate_right = false;
+                break;
+            case R.id.normal :
+                sel_blur_type = NORMAL;
+                myview.invalidate();
+                break;
+            case R.id.inner :
+                sel_blur_type = INNER;
+                myview.invalidate();
+                break;
+            case R.id.outer :
+                sel_blur_type = OUTER;
+                myview.invalidate();
+                break;
+            case R.id.solid :
+                sel_blur_type = SOLID;
+                myview.invalidate();
                 break;
         }
 
@@ -319,9 +372,18 @@ public class MainActivity extends AppCompatActivity {
             canvas.rotate(angle, cenX, cenY);
 
             Paint paint = new Paint();
-            float[] array = {RGB_bright, 0, 0, 0, 0,
-                             0, RGB_bright, 0, 0, 0,
-                             0, 0, RGB_bright, 0, 0,
+
+            if (control_contrast) {
+                bright_sign = -1;
+                brightness = 255;
+            } else {
+                bright_sign = 1;
+                brightness = 0;
+            }
+
+            float[] array = {(bright_sign) * RGB_bright, 0, 0, 0, brightness,
+                             0, (bright_sign) * RGB_bright, 0, 0, brightness,
+                             0, 0, (bright_sign) * RGB_bright, 0, brightness,
                               0, 0, 0, 1, 0};
 
             ColorMatrix cm = new ColorMatrix(array);
@@ -330,7 +392,21 @@ public class MainActivity extends AppCompatActivity {
             paint.setColorFilter(new ColorMatrixColorFilter(cm));
 
             BlurMaskFilter bMask;
-            bMask = new BlurMaskFilter(blur_radius+1, BlurMaskFilter.Blur.NORMAL);
+
+            switch (sel_blur_type) {
+                case INNER :
+                    bMask = new BlurMaskFilter(blur_radius+1, BlurMaskFilter.Blur.INNER);
+                    break;
+                case OUTER :
+                    bMask = new BlurMaskFilter(blur_radius+1, BlurMaskFilter.Blur.OUTER);
+                    break;
+                case SOLID :
+                    bMask = new BlurMaskFilter(blur_radius+1, BlurMaskFilter.Blur.SOLID);
+                    break;
+                default :
+                    bMask = new BlurMaskFilter(blur_radius+1, BlurMaskFilter.Blur.NORMAL);
+            }
+
             if (control_blur) {
                 paint.setMaskFilter(bMask);
             } else {

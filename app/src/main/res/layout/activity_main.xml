@@ -42,12 +42,6 @@
             android:src="@drawable/blur"></ImageButton>
 
         <ImageButton
-            android:id="@+id/emboss"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/embos"></ImageButton>
-
-        <ImageButton
             android:id="@+id/mosaic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

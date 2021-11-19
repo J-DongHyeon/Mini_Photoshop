@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/normal"
+        android:title="NORMAL"></item>
+
+    <item
+        android:id="@+id/inner"
+        android:title="INNER"></item>
+
+    <item
+        android:id="@+id/outer"
+        android:title="OUTER"></item>
+
+    <item
+        android:id="@+id/solid"
+        android:title="SOLID"></item>
+
+</menu>

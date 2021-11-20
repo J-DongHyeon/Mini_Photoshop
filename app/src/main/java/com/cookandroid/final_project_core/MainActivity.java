@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
     boolean control_stamp = false;
     boolean control_eraser = false;
     boolean control_snow = false;
-    boolean control_mosaic = false;
+    boolean control_mosaic_draw = false;
+    boolean control_mosaic_show = false;
 
     float scaleX = 1, scaleY = 1;
     float angle = 0;
@@ -125,6 +126,16 @@ public class MainActivity extends AppCompatActivity {
                 control_gray = false;
                 control_blur = false;
                 control_contrast = false;
+                control_pen = false;
+                control_stamp = false;
+                control_mosaic_draw = false;
+                control_mosaic_show = false;
+                myview.mosaic_eraser();
+
+
+                pen.setBackgroundColor(0XFFDDDDDD);
+                stamp.setBackgroundColor(0XFFDDDDDD);
+                mosaic.setBackgroundColor(0XFFDDDDDD);
 
                 sBar.setProgress(50);
                 myview.invalidate();
@@ -150,6 +161,13 @@ public class MainActivity extends AppCompatActivity {
                 control_gray = false;
                 control_blur = false;
                 control_contrast = false;
+                control_pen = false;
+                control_stamp = false;
+                control_mosaic_draw = false;
+
+                pen.setBackgroundColor(0XFFDDDDDD);
+                stamp.setBackgroundColor(0XFFDDDDDD);
+                mosaic.setBackgroundColor(0XFFDDDDDD);
 
                 sBar.setProgress(50);
 
@@ -159,6 +177,13 @@ public class MainActivity extends AppCompatActivity {
         saveImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                control_pen = false;
+                control_stamp = false;
+                control_mosaic_draw = false;
+                pen.setBackgroundColor(0XFFDDDDDD);
+                stamp.setBackgroundColor(0XFFDDDDDD);
+                mosaic.setBackgroundColor(0XFFDDDDDD);
 
                 SimpleDateFormat day = new SimpleDateFormat("yyyyMMddHHmmss");
                 Date date = new Date();
@@ -205,14 +230,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 control_zoomin = !control_zoomin;
-                control_bright = false;
-                control_mosaic = false;
 
                 if (control_zoomin) {
                     sBar.setVisibility(View.VISIBLE);
                 } else {
                     sBar.setVisibility(View.INVISIBLE);
                 }
+
+                control_bright = false;
+                control_pen = false;
+                control_stamp = false;
+                control_mosaic_draw = false;
+                pen.setBackgroundColor(0XFFDDDDDD);
+                stamp.setBackgroundColor(0XFFDDDDDD);
+                mosaic.setBackgroundColor(0XFFDDDDDD);
 
 
                 select_sBar = "zoom_in";
@@ -229,7 +260,12 @@ public class MainActivity extends AppCompatActivity {
                 sBar.setVisibility(View.INVISIBLE);
                 control_zoomin = false;
                 control_bright = false;
-                control_mosaic = false;
+                control_pen = false;
+                control_stamp = false;
+                control_mosaic_draw = false;
+                pen.setBackgroundColor(0XFFDDDDDD);
+                stamp.setBackgroundColor(0XFFDDDDDD);
+                mosaic.setBackgroundColor(0XFFDDDDDD);
 
                 if (control_rotate_right) {
                     angle += 20;
@@ -248,7 +284,12 @@ public class MainActivity extends AppCompatActivity {
                 control_bright = !control_bright;
                 control_contrast = false;
                 control_zoomin = false;
-                control_mosaic = false;
+                control_pen = false;
+                control_stamp = false;
+                control_mosaic_draw = false;
+                pen.setBackgroundColor(0XFFDDDDDD);
+                stamp.setBackgroundColor(0XFFDDDDDD);
+                mosaic.setBackgroundColor(0XFFDDDDDD);
 
                 if (control_bright) {
                     sBar.setVisibility(View.VISIBLE);
@@ -270,7 +311,12 @@ public class MainActivity extends AppCompatActivity {
                 sBar.setVisibility(View.INVISIBLE);
                 control_zoomin = false;
                 control_bright = false;
-                control_mosaic = false;
+                control_pen = false;
+                control_stamp = false;
+                control_mosaic_draw = false;
+                pen.setBackgroundColor(0XFFDDDDDD);
+                stamp.setBackgroundColor(0XFFDDDDDD);
+                mosaic.setBackgroundColor(0XFFDDDDDD);
 
                 control_gray = !control_gray;
                 myview.invalidate();
@@ -283,7 +329,12 @@ public class MainActivity extends AppCompatActivity {
                 control_blur = !control_blur;
                 control_zoomin = false;
                 control_bright = false;
-                control_mosaic = false;
+                control_pen = false;
+                control_stamp = false;
+                control_mosaic_draw = false;
+                pen.setBackgroundColor(0XFFDDDDDD);
+                stamp.setBackgroundColor(0XFFDDDDDD);
+                mosaic.setBackgroundColor(0XFFDDDDDD);
 
                 if (control_blur) {
                     sBar.setVisibility(View.VISIBLE);
@@ -302,11 +353,29 @@ public class MainActivity extends AppCompatActivity {
         mosaic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                control_mosaic = !control_mosaic;
+
+                if (!control_getImg) {
+                    control_mosaic_draw = false;
+                    control_mosaic_show = false;
+                } else {
+                    control_mosaic_draw = !control_mosaic_draw;
+                    control_mosaic_show = true;
+                }
+
+                sBar.setVisibility(View.INVISIBLE);
+
                 control_zoomin = false;
                 control_bright = false;
                 control_pen = false;
                 control_stamp = false;
+
+                if (control_mosaic_draw) {
+                    mosaic.setBackgroundColor(0XFFaaaaaa);
+                    pen.setBackgroundColor(0XFFDDDDDD);
+                    stamp.setBackgroundColor(0XFFDDDDDD);
+                } else {
+                    mosaic.setBackgroundColor(0XFFDDDDDD);
+                }
 
 
             }
@@ -318,7 +387,12 @@ public class MainActivity extends AppCompatActivity {
                 control_contrast = !control_contrast;
                 control_zoomin = false;
                 control_bright = false;
-                control_mosaic = false;
+                control_pen = false;
+                control_stamp = false;
+                control_mosaic_draw = false;
+                pen.setBackgroundColor(0XFFDDDDDD);
+                stamp.setBackgroundColor(0XFFDDDDDD);
+                mosaic.setBackgroundColor(0XFFDDDDDD);
 
 
                 if (control_contrast) {
@@ -341,12 +415,15 @@ public class MainActivity extends AppCompatActivity {
                 control_pen = !control_pen;
                 control_zoomin = false;
                 control_bright = false;
-                control_mosaic = false;
+                control_mosaic_draw = false;
                 control_stamp = false;
+
+                sBar.setVisibility(View.INVISIBLE);
 
                 if (control_pen) {
                     pen.setBackgroundColor(0XFFaaaaaa);
                     stamp.setBackgroundColor(0XFFDDDDDD);
+                    mosaic.setBackgroundColor(0XFFDDDDDD);
                 } else {
                     pen.setBackgroundColor(0XFFDDDDDD);
                 }
@@ -361,12 +438,15 @@ public class MainActivity extends AppCompatActivity {
                 control_stamp = !control_stamp;
                 control_zoomin = false;
                 control_bright = false;
-                control_mosaic = false;
+                control_mosaic_draw = false;
                 control_pen = false;
+
+                sBar.setVisibility(View.INVISIBLE);
 
                 if (control_stamp) {
                     stamp.setBackgroundColor(0XFFaaaaaa);
                     pen.setBackgroundColor(0XFFDDDDDD);
+                    mosaic.setBackgroundColor(0XFFDDDDDD);
                 } else {
                     stamp.setBackgroundColor(0XFFDDDDDD);
                 }
@@ -380,7 +460,14 @@ public class MainActivity extends AppCompatActivity {
                 control_eraser = true;
                 control_zoomin = false;
                 control_bright = false;
-                control_mosaic = false;
+                control_pen = false;
+                control_stamp = false;
+                control_mosaic_draw = false;
+                pen.setBackgroundColor(0XFFDDDDDD);
+                stamp.setBackgroundColor(0XFFDDDDDD);
+                mosaic.setBackgroundColor(0XFFDDDDDD);
+
+                sBar.setVisibility(View.INVISIBLE);
 
                 myview.invalidate();
             }
@@ -393,7 +480,12 @@ public class MainActivity extends AppCompatActivity {
                 control_snow = !control_snow;
                 control_zoomin = false;
                 control_bright = false;
-                control_mosaic = false;
+                control_pen = false;
+                control_stamp = false;
+                control_mosaic_draw = false;
+                pen.setBackgroundColor(0XFFDDDDDD);
+                stamp.setBackgroundColor(0XFFDDDDDD);
+                mosaic.setBackgroundColor(0XFFDDDDDD);
 
                 if (control_getImg) {
                     if (control_snow) {
@@ -646,9 +738,14 @@ public class MainActivity extends AppCompatActivity {
         int stamp3_sites[][] = new int[50][2];
         int stamp3_idx = 0;
 
-        int mosaic_rect_startX, mosaic_rect_startY;
-        int mosaic_rect_endX, mosaic_rect_endY;
+        int mosaic_cv_startX, mosaic_cv_startY;
+        int mosaic_cv_endX, mosaic_cv_endY;
         boolean draw_rect = true;
+
+        int mosaic_idx = 0;
+        Bitmap mosaic_bm_sub[] = new Bitmap[100];
+        int mosaic_cv_startX_arr[] = new int[100];
+        int mosaic_cv_startY_arr[] = new int[100];
 
         public myView(Context context) {
             super(context);
@@ -718,7 +815,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             if (control_getImg) {
-                if (control_mosaic) {
+                if (control_mosaic_show) {
                     mosaic_method(canvas);
                 } else {
                     getImg_method(canvas);
@@ -746,7 +843,6 @@ public class MainActivity extends AppCompatActivity {
 
             canvas.drawBitmap(getImg_buffer, img_startX, img_startY, paint[0]);
 
-
         }
 
         private void mosaic_method (Canvas canvas) {
@@ -755,74 +851,45 @@ public class MainActivity extends AppCompatActivity {
             mosaic_paint.setStyle(Paint.Style.STROKE);
             mosaic_paint.setStrokeWidth(10);
 
-            Rect rect = new Rect(mosaic_rect_startX, mosaic_rect_startY, mosaic_rect_endX, mosaic_rect_endY);
+            Rect rect = new Rect(mosaic_cv_startX, mosaic_cv_startY, mosaic_cv_endX, mosaic_cv_endY);
 
             canvas.drawBitmap(getImg_buffer, img_startX, img_startY, paint[0]);
 
             if (draw_rect) {
                 canvas.drawRect(rect, mosaic_paint);
             } else {
-
-                canvas.drawBitmap(getImg_buffer, img_startX, img_startY, paint[0]);
                 mosaicEffect(canvas, getImg_buffer);
-
             }
 
 
         }
 
+
+
         private void mosaicEffect (Canvas canvas, Bitmap source) {
 
-            int mosaic_startX = mosaic_rect_startX - img_startX;
-            int mosaic_startY = mosaic_rect_startY - img_startY;
-            int mosaic_endX = mosaic_rect_endX - img_startX;
-            int mosaic_endY = mosaic_rect_endY - img_startY;
-
-            int mosaic_width = mosaic_endX-mosaic_startX;
-            int mosaic_height = mosaic_endY-mosaic_startY;
+            int mosaic_width = mosaic_cv_endX - mosaic_cv_startX;
+            int mosaic_height = mosaic_cv_endY - mosaic_cv_startY;
 
 
-            Bitmap mosaic_bm_sub = Bitmap.createScaledBitmap(source, 5, 5, false);
-            mosaic_bm_sub = Bitmap.createScaledBitmap(mosaic_bm_sub, mosaic_width, mosaic_height, false);
+            mosaic_bm_sub[mosaic_idx] = Bitmap.createScaledBitmap(source, 5, 5, false);
+            mosaic_bm_sub[mosaic_idx] = Bitmap.createScaledBitmap(mosaic_bm_sub[mosaic_idx], mosaic_width, mosaic_height, false);
 
-            canvas.drawBitmap(mosaic_bm_sub, mosaic_rect_startX, mosaic_rect_startY, paint[0]);
+            mosaic_cv_startX_arr[mosaic_idx] = mosaic_cv_startX;
+            mosaic_cv_startY_arr[mosaic_idx] = mosaic_cv_startY;
 
-/*
-            int[] pixels = new int[width*height];
-            source.getPixels(pixels, 0, width, 0, 0, width, height);
 
-            int[] pixels_sub = new int [(mosaic_width) * (mosaic_height)];
-
-            for (int i=0; i<mosaic_height; i++) {
-                for (int j=0; j<mosaic_width; j++) {
-                    pixels_sub[i*(mosaic_width) + j] = pixels[(i+mosaic_startY)*width + mosaic_startX + j];
-                }
+            for (int i=0; i<=mosaic_idx; i++) {
+                canvas.drawBitmap(mosaic_bm_sub[i], mosaic_cv_startX_arr[i], mosaic_cv_startY_arr[i], paint[0]);
             }
-
-            Bitmap bmRect = Bitmap.createBitmap(mosaic_width, mosaic_height, Bitmap.Config.ARGB_8888);
-            bmRect.setPixels(pixels_sub, 0, mosaic_width, 0, 0, mosaic_width, mosaic_height);
-
-            Bitmap temp = Bitmap.createScaledBitmap(bmRect, 5, 5, false);
-            bmRect = Bitmap.createScaledBitmap(temp, bmRect.getWidth(), bmRect.getHeight(), false);
-
-            bmRect.getPixels(pixels_sub, 0, bmRect.getWidth(), 0, 0, bmRect.getWidth(), bmRect.getHeight());
-
-            for (int i=0; i<mosaic_height; i++) {
-                for (int j=0; j<mosaic_width; j++) {
-                    pixels[(i+mosaic_startY)*width + mosaic_startX + j] = pixels_sub[i*(mosaic_width) + j];
-                }
-
-            }
-
-            bmRect.recycle();
-            temp.recycle();
+            mosaic_idx++;
+            if (mosaic_idx > 99) mosaic_idx = 99;
 
 
-            source.setPixels(pixels, 0, width, 0, 0, width, height);
+        }
 
-
- */
-
+        public void mosaic_eraser() {
+            mosaic_idx = 0;
         }
 
 
@@ -900,81 +967,89 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                         }
 
-
+                        invalidate();
                     }
 
-                    if (control_getImg && control_mosaic) {
+                    if (control_getImg && control_mosaic_draw) {
                         if (x < img_startX) {
-                            mosaic_rect_startX = img_startX;
+                            mosaic_cv_startX = img_startX;
                         } else if (x > img_endX) {
-                            mosaic_rect_startX = img_endX;
+                            mosaic_cv_startX = img_endX;
                         } else {
-                            mosaic_rect_startX = x;
+                            mosaic_cv_startX = x;
                         }
 
                         if (y < img_startY) {
-                            mosaic_rect_startY = img_startY;
+                            mosaic_cv_startY = img_startY;
                         } else if (y > img_endY) {
-                            mosaic_rect_startY = img_endY;
+                            mosaic_cv_startY = img_endY;
                         } else {
-                            mosaic_rect_startY = y;
+                            mosaic_cv_startY = y;
                         }
 
-                        mosaic_rect_endX = mosaic_rect_startX;
-                        mosaic_rect_endY = mosaic_rect_startY;
+                        mosaic_cv_endX = mosaic_cv_startX;
+                        mosaic_cv_endY = mosaic_cv_startY;
 
                         draw_rect = true;
+                        invalidate();
                     }
 
-                    invalidate();
                     break;
 
                 case MotionEvent.ACTION_MOVE:
-                    if (control_pen)
+                    if (control_pen) {
                         path[path_idx].lineTo(x, y);
+                        invalidate();
+                    }
 
-                    if (control_getImg && control_mosaic) {
+
+                    if (control_getImg && control_mosaic_draw) {
                         if (x < img_startX) {
-                            mosaic_rect_endX = img_startX;
+                            mosaic_cv_endX = img_startX;
                         } else if (x > img_endX) {
-                            mosaic_rect_endX = img_endX;
+                            mosaic_cv_endX = img_endX;
                         } else {
-                            mosaic_rect_endX = x;
+                            mosaic_cv_endX = x;
                         }
 
                         if (y < img_startY) {
-                            mosaic_rect_endY = img_startY;
+                            mosaic_cv_endY = img_startY;
                         } else if (y > img_endY) {
-                            mosaic_rect_endY = img_endY;
+                            mosaic_cv_endY = img_endY;
                         } else {
-                            mosaic_rect_endY = y;
+                            mosaic_cv_endY = y;
                         }
+                        invalidate();
                     }
 
-                    invalidate();
                     break;
 
                 case MotionEvent.ACTION_UP:
                     if (control_pen) {
                         path[path_idx++].lineTo(x, y);
                         if (path_idx > 100) path_idx = 100;
+
+                        invalidate();
                     }
 
-                    if (control_getImg && control_mosaic) {
+                    if (control_getImg && control_mosaic_draw) {
 
-                        if (mosaic_rect_startX > mosaic_rect_endX) {
-                            int temp = mosaic_rect_startX;
-                            mosaic_rect_startX = mosaic_rect_endX;
-                            mosaic_rect_endX = temp;
-
-                            temp = mosaic_rect_startY;
-                            mosaic_rect_startY = mosaic_rect_endY;
-                            mosaic_rect_endY = temp;
+                        if (mosaic_cv_startX > mosaic_cv_endX) {
+                            int temp = mosaic_cv_startX;
+                            mosaic_cv_startX = mosaic_cv_endX;
+                            mosaic_cv_endX = temp;
                         }
+
+                        if (mosaic_cv_startY > mosaic_cv_endY) {
+                            int temp = mosaic_cv_startY;
+                            mosaic_cv_startY = mosaic_cv_endY;
+                            mosaic_cv_endY = temp;
+                        }
+
                         draw_rect = false;
+                        invalidate();
                     }
 
-                    invalidate();
                     break;
 
             }
@@ -988,7 +1063,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
 
 
 }

@@ -305,6 +305,8 @@ public class MainActivity extends AppCompatActivity {
                 control_mosaic = !control_mosaic;
                 control_zoomin = false;
                 control_bright = false;
+                control_pen = false;
+                control_stamp = false;
 
 
             }
@@ -716,7 +718,11 @@ public class MainActivity extends AppCompatActivity {
 
 
             if (control_getImg) {
-                getImg_method(canvas);
+                if (control_mosaic) {
+                    mosaic_method(canvas);
+                } else {
+                    getImg_method(canvas);
+                }
             }
 
             for (int i=1; i<=path_idx; i++) {
@@ -729,9 +735,6 @@ public class MainActivity extends AppCompatActivity {
                 eraser_method();
             }
 
-            if (control_getImg && control_mosaic) {
-                mosaic_method(canvas);
-            }
 
         }
 
@@ -742,6 +745,8 @@ public class MainActivity extends AppCompatActivity {
             img_endY = img_startY + getImg_buffer.getHeight();
 
             canvas.drawBitmap(getImg_buffer, img_startX, img_startY, paint[0]);
+
+
         }
 
         private void mosaic_method (Canvas canvas) {
@@ -752,19 +757,21 @@ public class MainActivity extends AppCompatActivity {
 
             Rect rect = new Rect(mosaic_rect_startX, mosaic_rect_startY, mosaic_rect_endX, mosaic_rect_endY);
 
+            canvas.drawBitmap(getImg_buffer, img_startX, img_startY, paint[0]);
+
             if (draw_rect) {
                 canvas.drawRect(rect, mosaic_paint);
             } else {
-                getImg_buffer = mosaicEffect(getImg_buffer);
+
                 canvas.drawBitmap(getImg_buffer, img_startX, img_startY, paint[0]);
+                mosaicEffect(canvas, getImg_buffer);
 
             }
+
+
         }
 
-        private Bitmap mosaicEffect (Bitmap source) {
-
-            int width = source.getWidth();
-            int height = source.getHeight();
+        private void mosaicEffect (Canvas canvas, Bitmap source) {
 
             int mosaic_startX = mosaic_rect_startX - img_startX;
             int mosaic_startY = mosaic_rect_startY - img_startY;
@@ -774,6 +781,13 @@ public class MainActivity extends AppCompatActivity {
             int mosaic_width = mosaic_endX-mosaic_startX;
             int mosaic_height = mosaic_endY-mosaic_startY;
 
+
+            Bitmap mosaic_bm_sub = Bitmap.createScaledBitmap(source, 5, 5, false);
+            mosaic_bm_sub = Bitmap.createScaledBitmap(mosaic_bm_sub, mosaic_width, mosaic_height, false);
+
+            canvas.drawBitmap(mosaic_bm_sub, mosaic_rect_startX, mosaic_rect_startY, paint[0]);
+
+/*
             int[] pixels = new int[width*height];
             source.getPixels(pixels, 0, width, 0, 0, width, height);
 
@@ -804,11 +818,11 @@ public class MainActivity extends AppCompatActivity {
             temp.recycle();
 
 
-            Bitmap bmOut = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-            bmOut.setPixels(pixels, 0, width, 0, 0, width, height);
+            source.setPixels(pixels, 0, width, 0, 0, width, height);
 
 
-            return bmOut;
+ */
+
         }
 
 
@@ -889,7 +903,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
 
-                    if (control_mosaic) {
+                    if (control_getImg && control_mosaic) {
                         if (x < img_startX) {
                             mosaic_rect_startX = img_startX;
                         } else if (x > img_endX) {
@@ -912,13 +926,14 @@ public class MainActivity extends AppCompatActivity {
                         draw_rect = true;
                     }
 
+                    invalidate();
                     break;
 
                 case MotionEvent.ACTION_MOVE:
                     if (control_pen)
                         path[path_idx].lineTo(x, y);
 
-                    if (control_mosaic) {
+                    if (control_getImg && control_mosaic) {
                         if (x < img_startX) {
                             mosaic_rect_endX = img_startX;
                         } else if (x > img_endX) {
@@ -935,6 +950,8 @@ public class MainActivity extends AppCompatActivity {
                             mosaic_rect_endY = y;
                         }
                     }
+
+                    invalidate();
                     break;
 
                 case MotionEvent.ACTION_UP:
@@ -943,17 +960,26 @@ public class MainActivity extends AppCompatActivity {
                         if (path_idx > 100) path_idx = 100;
                     }
 
-                    if (control_mosaic) {
+                    if (control_getImg && control_mosaic) {
+
+                        if (mosaic_rect_startX > mosaic_rect_endX) {
+                            int temp = mosaic_rect_startX;
+                            mosaic_rect_startX = mosaic_rect_endX;
+                            mosaic_rect_endX = temp;
+
+                            temp = mosaic_rect_startY;
+                            mosaic_rect_startY = mosaic_rect_endY;
+                            mosaic_rect_endY = temp;
+                        }
                         draw_rect = false;
                     }
 
+                    invalidate();
                     break;
 
             }
 
 
-
-            invalidate();
             return true;
         }
 

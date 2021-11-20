@@ -16,43 +16,50 @@
             android:id="@+id/zoom_in"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/zoom_in"></ImageButton>
+            android:src="@drawable/zoom_in"
+            android:layout_margin="3dp"></ImageButton>
 
         <ImageButton
             android:id="@+id/rotate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/rotate"></ImageButton>
+            android:src="@drawable/rotate"
+            android:layout_margin="3dp"></ImageButton>
 
         <ImageButton
             android:id="@+id/bright"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/bright"></ImageButton>
+            android:src="@drawable/bright"
+            android:layout_margin="3dp"></ImageButton>
 
         <ImageButton
             android:id="@+id/contrast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/contrast"></ImageButton>
+            android:src="@drawable/contrast"
+            android:layout_margin="3dp"></ImageButton>
 
         <ImageButton
             android:id="@+id/gray"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/gray"></ImageButton>
+            android:src="@drawable/gray"
+            android:layout_margin="3dp"></ImageButton>
 
         <ImageButton
             android:id="@+id/blur"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/blur"></ImageButton>
+            android:src="@drawable/blur"
+            android:layout_margin="3dp"></ImageButton>
 
         <ImageButton
             android:id="@+id/snow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/snow"></ImageButton>
+            android:src="@drawable/snow"
+            android:layout_margin="3dp"></ImageButton>
 
 
     </LinearLayout>

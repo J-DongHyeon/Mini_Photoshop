@@ -30,6 +30,12 @@
             android:src="@drawable/bright"></ImageButton>
 
         <ImageButton
+            android:id="@+id/contrast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/contrast"></ImageButton>
+
+        <ImageButton
             android:id="@+id/gray"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,16 +48,11 @@
             android:src="@drawable/blur"></ImageButton>
 
         <ImageButton
-            android:id="@+id/mosaic"
+            android:id="@+id/snow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/mosaic"></ImageButton>
+            android:src="@drawable/snow"></ImageButton>
 
-        <ImageButton
-            android:id="@+id/contrast"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/contrast"></ImageButton>
 
     </LinearLayout>
 
@@ -75,16 +76,17 @@
             android:src="@drawable/stamp1"></ImageButton>
 
         <ImageButton
+            android:id="@+id/mosaic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/mosaic"></ImageButton>
+
+        <ImageButton
             android:id="@+id/eraser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/eraser"></ImageButton>
 
-        <ImageButton
-            android:id="@+id/snow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/snow"></ImageButton>
 
     </LinearLayout>
 

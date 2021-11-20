@@ -9,7 +9,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:layout_margin="10dp">
 
         <ImageButton
             android:id="@+id/zoom_in"
@@ -67,25 +68,29 @@
             android:id="@+id/pen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/pen"></ImageButton>
+            android:src="@drawable/pen"
+            android:layout_margin="5dp"></ImageButton>
 
         <ImageButton
             android:id="@+id/stamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/stamp1"></ImageButton>
+            android:src="@drawable/stamp1"
+            android:layout_margin="5dp"></ImageButton>
 
         <ImageButton
             android:id="@+id/mosaic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/mosaic"></ImageButton>
+            android:src="@drawable/mosaic"
+            android:layout_margin="5dp"></ImageButton>
 
         <ImageButton
             android:id="@+id/eraser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/eraser"></ImageButton>
+            android:src="@drawable/eraser"
+            android:layout_margin="5dp"></ImageButton>
 
 
     </LinearLayout>
@@ -95,7 +100,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:layout_margin="10dp">
 
         <SeekBar
             android:id="@+id/sBar"
@@ -113,7 +119,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_weight="30"></LinearLayout>
+        android:layout_weight="70"></LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -128,7 +134,8 @@
             android:layout_height="wrap_content"
             android:text="되돌리기"
             android:layout_margin="10dp"
-            android:textSize="20dp"></Button>
+            android:textSize="20dp"
+            android:backgroundTint="#dd111111"></Button>
 
         <Button
             android:id="@+id/getImg"
@@ -136,7 +143,8 @@
             android:layout_height="wrap_content"
             android:text="가져오기"
             android:layout_margin="10dp"
-            android:textSize="20dp"></Button>
+            android:textSize="20dp"
+            android:backgroundTint="#dd111111"></Button>
 
         <Button
             android:id="@+id/saveImg"
@@ -144,7 +152,8 @@
             android:layout_height="wrap_content"
             android:text="저장하기"
             android:layout_margin="10dp"
-            android:textSize="20dp"></Button>
+            android:textSize="20dp"
+            android:backgroundTint="#dd111111"></Button>
 
 
     </LinearLayout>

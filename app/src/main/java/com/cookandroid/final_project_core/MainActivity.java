@@ -371,11 +371,12 @@ public class MainActivity extends AppCompatActivity {
 
                 if (control_mosaic_draw) {
                     mosaic.setBackgroundColor(0XFFaaaaaa);
-                    pen.setBackgroundColor(0XFFDDDDDD);
-                    stamp.setBackgroundColor(0XFFDDDDDD);
                 } else {
                     mosaic.setBackgroundColor(0XFFDDDDDD);
                 }
+
+                pen.setBackgroundColor(0XFFDDDDDD);
+                stamp.setBackgroundColor(0XFFDDDDDD);
 
 
             }
@@ -422,11 +423,12 @@ public class MainActivity extends AppCompatActivity {
 
                 if (control_pen) {
                     pen.setBackgroundColor(0XFFaaaaaa);
-                    stamp.setBackgroundColor(0XFFDDDDDD);
-                    mosaic.setBackgroundColor(0XFFDDDDDD);
                 } else {
                     pen.setBackgroundColor(0XFFDDDDDD);
                 }
+
+                mosaic.setBackgroundColor(0XFFDDDDDD);
+                stamp.setBackgroundColor(0XFFDDDDDD);
 
 
             }
@@ -445,11 +447,12 @@ public class MainActivity extends AppCompatActivity {
 
                 if (control_stamp) {
                     stamp.setBackgroundColor(0XFFaaaaaa);
-                    pen.setBackgroundColor(0XFFDDDDDD);
-                    mosaic.setBackgroundColor(0XFFDDDDDD);
                 } else {
                     stamp.setBackgroundColor(0XFFDDDDDD);
                 }
+
+                pen.setBackgroundColor(0XFFDDDDDD);
+                mosaic.setBackgroundColor(0XFFDDDDDD);
 
             }
         });

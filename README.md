@@ -18,8 +18,8 @@
 ------------
 ### 어플 실행 결과 1
 
-![ezgif com-gif-maker](https://user-images.githubusercontent.com/86474141/147644332-892af590-21f2-4be4-bc43-3a0658768383.gif)
+![ezgif com-gif-maker (2)](https://user-images.githubusercontent.com/86474141/147645085-592abb46-d019-4139-92ec-b94412b5b101.gif)
 
 ### 어플 실행 결과 2
 
-![ezgif com-gif-maker (1)](https://user-images.githubusercontent.com/86474141/147644366-c4cf897a-1d8c-4b69-b0eb-b57e4729a341.gif)
+![ezgif com-gif-maker (3)](https://user-images.githubusercontent.com/86474141/147645108-c300d227-75bb-44bc-97c6-d98ba4db3739.gif)

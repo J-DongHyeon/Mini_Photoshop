@@ -16,8 +16,9 @@
      + 편집한 이미지 갤러리에 저장
 
 ------------
-어플 실행 결과 1
+### 어플 실행 결과 1
+
 ![ezgif com-gif-maker](https://user-images.githubusercontent.com/86474141/147644332-892af590-21f2-4be4-bc43-3a0658768383.gif)
 
-어플 실행 결과 2
+### 어플 실행 결과 2
 ![ezgif com-gif-maker (1)](https://user-images.githubusercontent.com/86474141/147644366-c4cf897a-1d8c-4b69-b0eb-b57e4729a341.gif)

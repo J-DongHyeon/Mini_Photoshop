@@ -1,4 +1,8 @@
-## Android Studio로 나만의 미니 포토샵 어플 만들기
+
+<h1 align="center"> Mini Photoshop </h1>
+
+<h4 align="center"> 나만의 미니 포토샵 어플 (수업 연계 프로젝트) </h4>
+
 ### 포토샵 기능 
      1. 갤러리에서 사진 가져오기
      2. 줌 인, 줌 아웃

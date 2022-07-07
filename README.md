@@ -3,6 +3,14 @@
 
 <h4 align="center"> 나만의 미니 포토샵 어플 (수업 연계 프로젝트) </h4>
 
+<p align= "center">
+<img src=/docs/readme_Imgs/readme_img1.PNG width=500 height=350></p> 
+</br></br>
+
+------------------------------------------
+
+
+
 ### 포토샵 기능 
      1. 갤러리에서 사진 가져오기
      2. 줌 인, 줌 아웃

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 
+// 갤러리 접근과 관련된 class 이다. (오픈소스 이용)
+
 public class MediaScanner {
     private Context ctxt;
     private String file_Path;

@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     myView myview;
     Bitmap getImg_buffer, getImg_buffer_sub;
 
+    //각 이미지 버튼들이 활성화 됬는지 아닌지 나타내는 flag 역할을 하는 변수들
     boolean control_getImg = false;
     String select_sBar;
     boolean control_zoomin = false;
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     boolean control_mosaic_draw = false;
     boolean control_mosaic_show = false;
 
+    //이미지 확대, 축소, 회전 등 여러 가지 이미지 처리에 대한 값을 가지고 있는 변수들
     float scaleX = 1, scaleY = 1;
     float angle = 0;
     float RGB_bright = 1;
@@ -82,10 +84,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // 메인 layout을 화면에 나타낸다.
         setContentView(R.layout.activity_main);
 
         setTitle("미니 포토샵");
 
+        // 메인 layout에 있는 여러 가지 요소들을 id로 찾아 가져온다.
         zoom_in = (ImageButton) findViewById(R.id.zoom_in);
         rotate = (ImageButton) findViewById(R.id.rotate);
         bright = (ImageButton) findViewById(R.id.bright);
@@ -104,16 +109,19 @@ public class MainActivity extends AppCompatActivity {
         saveImg = (Button) findViewById(R.id.saveImg);
         return_state = (Button) findViewById(R.id.return_state);
 
+        // myView 클래스의 객체를 담을 (그림판 역할을 할) layout 을 가져온다.
         view_layout = (LinearLayout) findViewById(R.id.view_layout);
-
         myview = new myView(this);
         view_layout.addView(myview);
 
+        // rotate, blur, pen, stamp 이미지 버튼들은 long 클릭이 가능하도록 등록한다.
+        // 이 이미지 버튼들은 long 클릭 했을 때 컨텍스트 메뉴가 나타날 것이다.
         registerForContextMenu(rotate);
         registerForContextMenu(blur);
         registerForContextMenu(pen);
         registerForContextMenu(stamp);
 
+        // return_state 버튼은 되돌리기 버튼이다.
         return_state.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // getImg 버튼은 가져오기 버튼이다.
         getImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // saveImg 버튼은 저장하기 버튼이다.
         saveImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -189,24 +199,32 @@ public class MainActivity extends AppCompatActivity {
                 Date date = new Date();
                 String current_time = day.format(date) + "_capture";
 
+                // 그림판에 그려져 있는 것을 cache로 가져온다.
                 view_layout.buildDrawingCache();
+                
+                // cache에 저장되어 있는 것을 bitmap으로 가져온다.
                 Bitmap bitmap = view_layout.getDrawingCache();
+                
                 FileOutputStream fos = null;
-
+ 
+                // 비트맵을 저장할 폴더를 확인한다.
                 File uploadFolder = Environment.getExternalStoragePublicDirectory("/DCIM/Camera/");
-
                 if (!uploadFolder.exists()) {
                     uploadFolder.mkdir();
                     Toast.makeText(getApplicationContext(), "폴더가 생성되었습니다.",
                             Toast.LENGTH_SHORT).show();
                 }
 
+                // 비트맵을 저장할 폴더의 경로
                 String str_path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DCIM/Camera/";
 
-
                 try {
+                    // fileoutputstream 을 생성한다. fileoutputstream 을 통해 특정 경로의 폴더에 접근한다.
                     fos = new FileOutputStream(str_path+current_time+".jpg");
+                    
+                    // 앞서 cache에서 가져온 bitmap을 압축하여 fos에 저장한다.
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+                    
                     Toast.makeText(getApplicationContext(), "이미지 저장",
                             Toast.LENGTH_SHORT).show();
 
@@ -217,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 MediaScanner ms = MediaScanner.newInstance(getApplicationContext());
 
                 try {
+                    // 미디어스캐닝을 통해 특정 경로의 폴더를 스캔하여 갤러리로 가져온다. (갤러리 새로고침)
                     ms.mediaScanning(str_path + current_time + ".jpg");
                 }catch (Exception e) {
                     e.printStackTrace();
@@ -226,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // zoom_in 버튼은 확대 버튼이다.
         zoom_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -250,10 +270,12 @@ public class MainActivity extends AppCompatActivity {
 
                 sBar.setProgress((int) (scaleX * 50));
 
+                // 화면을 무효화시킨 후 onDraw() 메소드를 실행시킨다. (화면 갱신)
                 myview.invalidate();
             }
         });
 
+        // rotate 버튼은 회전 버튼이다.
         rotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -278,6 +300,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // bright 버튼은 밝기조절 버튼이다.
         bright.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -305,6 +328,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // gray 버튼은 흑백 변환 버튼이다.
         gray.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -323,6 +347,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // blur 버튼은 blur 조절 버튼이다.
         blur.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -350,10 +375,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // mosaic 버튼은 모자이크  버튼이다.
         mosaic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                // 이미지를 가져온 상태가 아니라면 모자이크 적용을 하지 않는다.
                 if (!control_getImg) {
                     control_mosaic_draw = false;
                     control_mosaic_show = false;
@@ -377,11 +404,10 @@ public class MainActivity extends AppCompatActivity {
 
                 pen.setBackgroundColor(0XFFDDDDDD);
                 stamp.setBackgroundColor(0XFFDDDDDD);
-
-
             }
         });
 
+        // contrast 버튼은 색 반전 후 밝기 조절 버튼이다.
         contrast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -410,6 +436,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // pen 버튼은 그림판에 펜 그리기 버튼이다.
         pen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -429,11 +456,10 @@ public class MainActivity extends AppCompatActivity {
 
                 mosaic.setBackgroundColor(0XFFDDDDDD);
                 stamp.setBackgroundColor(0XFFDDDDDD);
-
-
             }
         });
 
+        // stamp 버튼은 그림판에 스탬프 찍기 버튼이다.
         stamp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -457,6 +483,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // eraser 버튼은 그림판 지우기 버튼이다.
         eraser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -476,6 +503,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // snow 버튼은 그림판에 눈내리기 효과 버튼이다.
         snow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -497,16 +525,11 @@ public class MainActivity extends AppCompatActivity {
                         getImg_buffer = getImg_buffer_sub;
                     }
                 }
-
-
                 myview.invalidate();
             }
         });
 
-
-
-
-
+        // seekbar 값이 변할 때 실행되는 함수이다.
         sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -541,10 +564,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
-
             }
         });
-
         }
 
     private Bitmap snowEffect(Bitmap source) {

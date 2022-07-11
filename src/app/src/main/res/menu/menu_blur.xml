@@ -1,3 +1,6 @@
+
+<!-- blur 이미지 버튼을 long 클릭 했을 때 나타나는 컨텍스트 메뉴에 대한 xml 파일 이다. -->
+
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item

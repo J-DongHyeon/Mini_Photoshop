@@ -1,9 +1,15 @@
+
+<!-- 기본적으로 메인 화면에 나타날 layout 이다. -->
+
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- 가장 상위 layout이다. 내부 요소들을 vertical 로 정렬한다. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!-- 7개 이미지 버튼들을 포함하며 horizontal 로 나타내는 layout 이다. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -64,6 +70,7 @@
 
     </LinearLayout>
 
+    <!-- 4개 이미지 버튼들을 포함하며 horizontal 로 나타내는 layout 이다. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -102,6 +109,7 @@
 
     </LinearLayout>
 
+    <!-- seekbar를 포함하는 layout 이다. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -121,6 +129,7 @@
 
     </LinearLayout>
 
+    <!-- myView 클래스의 객체를 보여줄 layout 이다. 이 layout은 그림판 역할을 할 것이다. id는 view_layout 이다. -->
     <LinearLayout
         android:id="@+id/view_layout"
         android:layout_width="match_parent"
@@ -128,6 +137,7 @@
         android:orientation="vertical"
         android:layout_weight="70"></LinearLayout>
 
+    <!-- 3개 버튼들을 포함하며 horizontal 로 나타내는 layout 이다. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

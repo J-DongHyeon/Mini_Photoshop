@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
                 control_getImg = true;
 
+                // getImg 이미지 버튼을 누르면 갤러리 액티비티를 실행시킨다.
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                 startActivityForResult(intent, 1);
@@ -520,6 +521,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (control_getImg) {
                     if (control_snow) {
+                        // 원본 이미지에 눈내리기 효과를 
                         getImg_buffer = snowEffect(getImg_buffer);
                     } else {
                         getImg_buffer = getImg_buffer_sub;
@@ -571,23 +573,30 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap snowEffect(Bitmap source) {
         int width = source.getWidth();
         int height = source.getHeight();
+        
+        // 원본 이미지를 1차원 배열에 담아 놓는다.
         int[] pixels = new int[width*height];
         source.getPixels(pixels, 0, width, 0, 0, width, height);
         Random random = new Random();
 
         int R, G, B, index = 0, threshold;
+        
+        // 각 픽셀들을 순서대로 접근한다.
         for (int y=0; y<height; y++) {
             for (int x=0; x<width; x++) {
                 index = y*width + x;
 
+                // 각 픽셀들의 r, g, b 값을 받아온다.
                 R = Color.red(pixels[index]);
                 G = Color.green(pixels[index]);
                 B = Color.blue(pixels[index]);
 
+                // 각 픽셀들을 돌다가, 무작위 값이 1998 이상이 되면 그 픽셀 주변의 r, g, b 값을 255로 하여 흰색으로 한다. (눈 효과)
                 threshold = random.nextInt(2000);
                 if (threshold > 1998) {
                     pixels[index] = Color.rgb(255, 255, 255);
 
+                    // 현재 픽셀을 기준으로 상하좌우 10 픽셀 까지 접근한다.
                     if (index + 9*width+9 < pixels.length) {
                         for(int i=1; i<10; i++) {
                             pixels[index+i] = Color.rgb(255, 255, 255);
@@ -612,10 +621,12 @@ public class MainActivity extends AppCompatActivity {
         return bmOut;
     }
 
+    // 버튼을 long 클릭 했을 때 실행되는 메소드이다. (컨텍스트 메뉴 생성)
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
+        // 컨텍스트 메뉴에 대해 미리 xml 파일로 만들어 놓은 것을 menuinflater를 이용하여 가져올 것이다.
         MenuInflater menuInflater = getMenuInflater();
 
         if (v == rotate) {
@@ -638,6 +649,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // 컨텍스트 메뉴의 아이템을 클릭 했을 때 실행되는 메소드이다.
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
 
@@ -722,15 +734,19 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-
+    // 갤러리 액티비티 실행이 끝났을 때 실행되는 메소드이다.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 try {
+                    // 갤러리 액티비티 실행 후의 결과 데이터 (이미지) 를 입력 스트림에 저장한다.
                     InputStream in = getContentResolver().openInputStream(data.getData());
+                    
+                    // 입력 스트림에 있는 이미지를 비트맵으로 반환한다.
                     Bitmap img = BitmapFactory.decodeStream(in);
+                    
                     in.close();
                     getImg_buffer = getImg_buffer_sub = img;
 
@@ -741,20 +757,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-
+    // 그림판 역할을 하는 view 이다. view_layout 레이아웃에 들어갈 것이다.
     private class myView extends View {
 
+        // 이미지의 왼쪽 위 좌표와 오른쪽 아래 좌표
         int img_startX;
         int img_startY;
         int img_endX;
         int img_endY;
 
+        // 그림판에 그림을 그릴 펜에 대한 paint와 path 이다. 여러 개의 펜으로 여러 경로를 그릴 수 있으므로 넉넉하게 100개를 만들었다.
+        // 0번 인덱스 paint는 이미지에 대한 paint 이다.
         Paint paint[] = new Paint[100];
         Path path[] = new Path[100];
         int path_idx = 1;
 
+        // 3개 종류 스탬프에 대한 위치 정보를 가지고 있는 배열이다. 여러 개의 스탬프를 찍을 수 있으므로 넉넉하게 50개를 만들었다.
         int stamp1_sites[][] = new int[50][2];
         int stamp1_idx = 0;
         int stamp2_sites[][] = new int[50][2];
@@ -762,10 +780,13 @@ public class MainActivity extends AppCompatActivity {
         int stamp3_sites[][] = new int[50][2];
         int stamp3_idx = 0;
 
+        // 모자이크의 왼쪽 위, 오른쪽 아래 좌표를 담을 변수이다.
+        // draw_rect는 모자이크를 그리는 중인가 아닌가에 대한 flag 역할을 한다.
         int mosaic_cv_startX, mosaic_cv_startY;
         int mosaic_cv_endX, mosaic_cv_endY;
         boolean draw_rect = true;
 
+        // 모자이크를 여러 개 그릴 수도 있다. 모자이크와 모자이크의 위치 정보를 배열에 저장해 둔다. 넉넉하게 100개 크기로 만들었다.
         int mosaic_idx = 0;
         Bitmap mosaic_bm_sub[] = new Bitmap[100];
         int mosaic_cv_startX_arr[] = new int[100];
@@ -787,17 +808,20 @@ public class MainActivity extends AppCompatActivity {
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
 
+            // view_layout의 중심 좌표이다.
             int cenX = view_layout.getWidth() / 2;
             int cenY = view_layout.getHeight() / 2;
 
+            // 확대, 축소, 회전 정보에 따라 cenX, cenY를 중심으로 이미지 처리를 한다.
             canvas.scale(scaleX, scaleY, cenX, cenY);
             canvas.rotate(angle, cenX, cenY);
 
+            // 현재 펜의 정보를 저장한다.
             paint[path_idx].setColor(pen_color);
             paint[path_idx].setStyle(Paint.Style.STROKE);
             paint[path_idx].setStrokeWidth(pen_thickness);
 
-
+            // 색 반전 버튼이 눌려있으면 반전시키고 아니면 반전시키지 않는다.
             if (control_contrast) {
                 bright_sign = -1;
                 brightness = 255;
@@ -806,16 +830,19 @@ public class MainActivity extends AppCompatActivity {
                 brightness = 0;
             }
 
+            // 여러 가지 색 정보에 따라서 color metrix를 생성한다.
             float[] array = {(bright_sign) * RGB_bright, 0, 0, 0, brightness,
                              0, (bright_sign) * RGB_bright, 0, 0, brightness,
                              0, 0, (bright_sign) * RGB_bright, 0, brightness,
                               0, 0, 0, 1, 0};
-
             ColorMatrix cm = new ColorMatrix(array);
+            
+            // gray 버튼이 눌려있으면 color metrix를 무시한다.
             if (control_gray) cm.setSaturation(0);
 
             paint[0].setColorFilter(new ColorMatrixColorFilter(cm));
 
+            // sel_blur_type 의 정보에 따라 블러링 마스크를 생성한다.
             BlurMaskFilter bMask;
             switch (sel_blur_type) {
                 case INNER :
@@ -831,13 +858,15 @@ public class MainActivity extends AppCompatActivity {
                     bMask = new BlurMaskFilter(blur_radius+1, BlurMaskFilter.Blur.NORMAL);
             }
 
+            // 블러링 버튼이 눌려있으면 블러링 마스크를 적용한다.
             if (control_blur) {
                 paint[0].setMaskFilter(bMask);
             } else {
                 paint[0].setMaskFilter(null);
             }
 
-
+            // 이미지가 view_layout에 출력되어 있는 상태에서 모자이크 버튼이 눌렸으면 모자이크 효과를 적용한다.
+            // 모자이크 버튼은 안 눌렸으면 모자이크 효과는 넣지 않는다.
             if (control_getImg) {
                 if (control_mosaic_show) {
                     mosaic_method(canvas);
@@ -846,12 +875,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+            // 현재까지 저장되어 있는 path, paint 정보에 따라서 펜으로 그림판에 그린다.
             for (int i=1; i<=path_idx; i++) {
                 canvas.drawPath(path[i], paint[i]);
             }
 
+            // 현재까지 저장되어 있는 스탬프 정보에 따라서 스탬프를 그림판에 찍는다.
             draw_stamp(canvas);
 
+            // 지우개 버튼이 눌 그림판의 효과들을 지운다.
             if (control_eraser) {
                 eraser_method();
             }
@@ -859,6 +891,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        // 현재 출력되어 있는 이미지에 대해 paint[0]를 적용시켜서 그림판에 출력한다.
         private void getImg_method(Canvas canvas) {
             img_startX = (view_layout.getWidth() - getImg_buffer.getWidth()) / 2;
             img_startY = (view_layout.getHeight() - getImg_buffer.getHeight()) / 2;
@@ -866,46 +899,51 @@ public class MainActivity extends AppCompatActivity {
             img_endY = img_startY + getImg_buffer.getHeight();
 
             canvas.drawBitmap(getImg_buffer, img_startX, img_startY, paint[0]);
-
         }
 
+        // 모자이크 버튼이 눌렸으면 모자이크 효과를 적용한다.
         private void mosaic_method (Canvas canvas) {
             Paint mosaic_paint = new Paint();
             mosaic_paint.setColor(Color.GREEN);
             mosaic_paint.setStyle(Paint.Style.STROKE);
             mosaic_paint.setStrokeWidth(10);
 
+            // 현재 그리는 중인 모자이크에 대한 사각형이다.
             Rect rect = new Rect(mosaic_cv_startX, mosaic_cv_startY, mosaic_cv_endX, mosaic_cv_endY);
 
+            // 우선 원본 이미지를 그림판에 그린다.
             canvas.drawBitmap(getImg_buffer, img_startX, img_startY, paint[0]);
 
+            // 모자이크를 그리는 중이면 그림판에 초록 사각형을 나타내고, 
+            // 모자이크 그리기를 완료 했으면 모자이크 효과를 적용한다.
             if (draw_rect) {
                 canvas.drawRect(rect, mosaic_paint);
             } else {
                 mosaicEffect(canvas, getImg_buffer);
             }
-
-
         }
 
-
-
+        // 이미지에 모자이크 효과를 내는 메소드이다.
         private void mosaicEffect (Canvas canvas, Bitmap source) {
 
             int mosaic_width = mosaic_cv_endX - mosaic_cv_startX;
             int mosaic_height = mosaic_cv_endY - mosaic_cv_startY;
 
-
+            // 원본 이미지를 5 X 5 크기로 줄인 후, 이를 다시 모자이크 사각형 크기에 맞추어 늘린다.
+            // (마지막 인자를 false로 하였으므로 5 X 5 픽셀 그대로 늘어난다. 따라서 이미지가 깨져 보이므로 모자이크 효과가 난다.)
+            // 이 모자이크를 배열에 저장해 둔다.
             mosaic_bm_sub[mosaic_idx] = Bitmap.createScaledBitmap(source, 5, 5, false);
             mosaic_bm_sub[mosaic_idx] = Bitmap.createScaledBitmap(mosaic_bm_sub[mosaic_idx], mosaic_width, mosaic_height, false);
 
+            // 모자이크의 위치 정보를 배열에 저장해 둔다.
             mosaic_cv_startX_arr[mosaic_idx] = mosaic_cv_startX;
             mosaic_cv_startY_arr[mosaic_idx] = mosaic_cv_startY;
 
-
+            // 저장되어 있는 여러 모자이크 들을 순서대로 그림판에 그린다.
             for (int i=0; i<=mosaic_idx; i++) {
                 canvas.drawBitmap(mosaic_bm_sub[i], mosaic_cv_startX_arr[i], mosaic_cv_startY_arr[i], paint[0]);
             }
+            
             mosaic_idx++;
             if (mosaic_idx > 99) mosaic_idx = 99;
 
@@ -916,9 +954,7 @@ public class MainActivity extends AppCompatActivity {
             mosaic_idx = 0;
         }
 
-
-
-
+        // 현재까지 저장되어 있는 스탬프 정보에 따라서 스탬프를 그림판에 찍는다.
         private void draw_stamp(Canvas canvas) {
             Bitmap stamp1_img = BitmapFactory.decodeResource(getResources(), R.drawable.stamp1);
 
@@ -942,6 +978,7 @@ public class MainActivity extends AppCompatActivity {
             stamp3_img.recycle();
         }
 
+        // 지우개 버튼이 눌리면 그림판의 효과들을 지운다.
         private void eraser_method() {
             path_idx = 1;
             stamp1_idx = 0;
@@ -957,22 +994,20 @@ public class MainActivity extends AppCompatActivity {
             invalidate();
         }
 
-
-
+        // myview에 터치 했을 때 실행되는 메소드이다.
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             int x = (int) event.getX();
             int y = (int) event.getY();
 
-
-
             switch (event.getAction()) {
+                
+                // 마우스 왼쪽 클릭을 한 경우
                 case MotionEvent.ACTION_DOWN:
                     if (control_pen)
                         path[path_idx].moveTo(x, y);
 
                     if (control_stamp) {
-
                         switch (select_stamp) {
                             case R.drawable.stamp1 :
                                 stamp1_sites[stamp1_idx][0] = x;
@@ -990,7 +1025,6 @@ public class MainActivity extends AppCompatActivity {
                                 if (stamp3_idx > 50) stamp3_idx = 50;
                                 break;
                         }
-
                         invalidate();
                     }
 
@@ -1020,12 +1054,12 @@ public class MainActivity extends AppCompatActivity {
 
                     break;
 
+                // 왼쪽 버튼을 클릭한 채로 마우스를 움직이는 경우
                 case MotionEvent.ACTION_MOVE:
                     if (control_pen) {
                         path[path_idx].lineTo(x, y);
                         invalidate();
                     }
-
 
                     if (control_getImg && control_mosaic_draw) {
                         if (x < img_startX) {
@@ -1045,9 +1079,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                         invalidate();
                     }
-
                     break;
 
+                // 마우스 왼쪽 버튼을 땐 경우
                 case MotionEvent.ACTION_UP:
                     if (control_pen) {
                         path[path_idx++].lineTo(x, y);
@@ -1075,15 +1109,8 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     break;
-
             }
-
-
             return true;
         }
-
-
     }
-
-
 }

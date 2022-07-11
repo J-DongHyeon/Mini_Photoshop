@@ -521,7 +521,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (control_getImg) {
                     if (control_snow) {
-                        // 원본 이미지에 눈내리기 효과를 
+                        // 원본 이미지에 눈내리기 효과를 적용
                         getImg_buffer = snowEffect(getImg_buffer);
                     } else {
                         getImg_buffer = getImg_buffer_sub;
@@ -591,7 +591,7 @@ public class MainActivity extends AppCompatActivity {
                 G = Color.green(pixels[index]);
                 B = Color.blue(pixels[index]);
 
-                // 각 픽셀들을 돌다가, 무작위 값이 1998 이상이 되면 그 픽셀 주변의 r, g, b 값을 255로 하여 흰색으로 한다. (눈 효과)
+                // 각 픽셀들을 돌다가, 무작위 값이 1998 보다 크면 그 픽셀 주변의 r, g, b 값을 255로 하여 흰색으로 한다. (눈 효과)
                 threshold = random.nextInt(2000);
                 if (threshold > 1998) {
                     pixels[index] = Color.rgb(255, 255, 255);

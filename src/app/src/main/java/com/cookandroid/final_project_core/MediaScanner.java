@@ -5,7 +5,7 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 
 // 갤러리 접근과 관련된 class 이다. (오픈소스 이용)
-// scan을 하여 fileoutputstream 에 저장한 비트맵을 갤러리로 가져온다. (갤러리 새로 고침)
+// scan을 하여 fileoutputstream 을 통해 저장한 비트맵을 갤러리로 가져온다. (갤러리 새로 고침)
 
 public class MediaScanner {
     private Context ctxt;
